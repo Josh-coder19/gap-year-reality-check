@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gap Year Reality Check</title>
+  <meta name="description" content="6 quick questions. Honest advice from someone who's been there.">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #1A1815;
+      font-family: 'DM Sans', sans-serif;
+      color: #D4CFC5;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .screen {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+    .screen.active {
+      display: flex;
+    }
+
+    /* Landing */
+    #landing { align-items: center; text-align: center; }
+    .landing-icon { font-size: 48px; margin-bottom: 20px; }
+    .landing-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(32px, 8vw, 44px);
+      font-weight: 700;
+      color: #F5F0E8;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+    .landing-sub {
+      font-size: 17px;
+      color: #A8A090;
+      max-width: 340px;
+      line-height: 1.55;
+      margin-bottom: 40px;
+    }
+    .btn-primary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: #1A1815;
+      background: #E8C87A;
+      border: none;
+      border-radius: 14px;
+      padding: 16px 48px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      letter-spacing: 0.3px;
+    }
+    .btn-primary:hover { background: #F0D68A; }
+    .btn-primary:disabled { background: #2A2722; color: #5A5549; cursor: default; opacity: 0.5; }
+    .landing-time { font-size: 13px; color: #5A5549; margin-top: 24px; }
+
+    /* Progress */
+    .progress { display: flex; gap: 6px; margin-bottom: 32px; justify-content: center; }
+    .progress-dot {
+      height: 8px;
+      border-radius: 4px;
+      background: #3A362F;
+      width: 8px;
+      transition: all 0.4s ease;
+    }
+    .progress-dot.active { width: 28px; background: #E8C87A; }
+
+    /* Question */
+    .q-counter {
+      font-size: 13px;
+      font-weight: 500;
+      color: #7A7368;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .q-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(24px, 6vw, 30px);
+      font-weight: 700;
+      color: #F5F0E8;
+      text-align: center;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .q-subtitle {
+      font-size: 14px;
+      color: #7A7368;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .options { display: flex; flex-direction: column; gap: 10px; max-width: 420px; width: 100%; margin: 0 auto; }
+    .option-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #D4CFC5;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-btn.selected {
+      color: #F5F0E8;
+      background: rgba(232,200,122,0.15);
+      border-color: #E8C87A;
+    }
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+      font-size: 13px;
+      color: #1A1815;
+      font-weight: 700;
+    }
+    .option-btn.selected .checkbox {
+      border-color: #E8C87A;
+      background: #E8C87A;
+    }
+    .next-wrap { text-align: center; margin-top: 24px; }
+
+    /* Free text */
+    #freetext { align-items: center; }
+    .freetext-area {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: #D4CFC5;
+      background: rgba(255,255,255,0.04);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 16px 18px;
+      min-height: 120px;
+      max-width: 420px;
+      width: 100%;
+      resize: vertical;
+      outline: none;
+      line-height: 1.55;
+      transition: border-color 0.2s ease;
+    }
+    .freetext-area:focus { border-color: rgba(232,200,122,0.4); }
+    .freetext-area::placeholder { color: #5A5549; }
+    .freetext-btns { display: flex; gap: 12px; justify-content: center; margin-top: 24px; }
+    .btn-secondary {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: #A8A090;
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 14px 28px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-submit {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1A1815;
+      background: #E8C87A;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 32px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-submit:hover { background: #F0D68A; }
+
+    /* Loading */
+    #loading { align-items: center; }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #3A362F;
+      border-top: 3px solid #E8C87A;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 28px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-msg { font-size: 16px; color: #A8A090; }
+
+    /* Result */
+    #result { align-items: center; padding-top: 48px; }
+    .result-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(26px, 7vw, 34px);
+      font-weight: 700;
+      color: #F5F0E8;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    .result-sub { font-size: 14px; color: #7A7368; text-align: center; margin-bottom: 36px; }
+    .result-cards { display: flex; flex-direction: column; gap: 20px; max-width: 480px; width: 100%; }
+    .result-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 24px;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.5s ease forwards;
+    }
+    .result-card:nth-child(1) { animation-delay: 0s; }
+    .result-card:nth-child(2) { animation-delay: 0.12s; }
+    .result-card:nth-child(3) { animation-delay: 0.24s; }
+    .result-card:nth-child(4) { animation-delay: 0.36s; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .card-icon { font-size: 20px; }
+    .card-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #E8C87A;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .card-body { font-size: 16px; color: #D4CFC5; line-height: 1.65; }
+    .result-footer { text-align: center; margin-top: 40px; }
+    .result-tagline { font-size: 13px; color: #5A5549; margin-top: 12px; max-width: 300px; }
+
+    /* Error */
+    #error { align-items: center; text-align: center; }
+
+    /* Transitions */
+    .fade-in { animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Landing -->
+  <div id="landing" class="screen active">
+    <div class="landing-icon">&#x1F9ED;</div>
+    <h1 class="landing-title">Gap Year<br>Reality Check</h1>
+    <p class="landing-sub">6 quick questions. No sign-up.<br>Honest advice from someone who's been there.</p>
+    <button class="btn-primary" onclick="startQuiz()">Let's go</button>
+    <p class="landing-time">Takes about 90 seconds</p>
+  </div>
+
+  <!-- Questions -->
+  <div id="question" class="screen">
+    <div class="progress" id="progressBar"></div>
+    <p class="q-counter" id="qCounter"></p>
+    <h2 class="q-title" id="qTitle"></h2>
+    <p class="q-subtitle" id="qSubtitle"></p>
+    <div class="options" id="optionsWrap"></div>
+    <div class="next-wrap">
+      <button class="btn-primary" id="nextBtn" disabled onclick="nextQuestion()">Next &#x2192;</button>
+    </div>
+  </div>
+
+  <!-- Free text -->
+  <div id="freetext" class="screen">
+    <div class="progress" id="progressBarFull"></div>
+    <h2 class="q-title">Anything else going on?</h2>
+    <p class="q-subtitle" style="max-width:380px;line-height:1.5;margin-bottom:28px">Totally optional — but even one sentence helps make your result way more personal.</p>
+    <textarea class="freetext-area" id="freeTextInput" placeholder='e.g. "I deferred nursing and now I&#39;m not sure I even want to do health" or "Everyone around me seems to have it figured out"'></textarea>
+    <div class="freetext-btns">
+      <button class="btn-secondary" onclick="submitFreeText('')">Skip</button>
+      <button class="btn-submit" onclick="submitFreeText(document.getElementById('freeTextInput').value)">Get my reality check &#x2192;</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="screen">
+    <div class="spinner"></div>
+    <p class="loading-msg" id="loadingMsg">Reading between the lines&#x2026;</p>
+  </div>
+
+  <!-- Result -->
+  <div id="result" class="screen">
+    <h2 class="result-title">Your Reality Check</h2>
+    <p class="result-sub">Based on what you told us</p>
+    <div class="result-cards" id="resultCards"></div>
+    <div class="result-footer">
+      <button class="btn-primary" onclick="restart()">Start over</button>
+      <p class="result-tagline">Built by someone on year two of a gap year. You're not behind.</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div id="error" class="screen">
+    <p style="font-size:16px;color:#D4CFC5;margin-bottom:8px">Something went wrong generating your results.</p>
+    <p style="font-size:14px;color:#7A7368;margin-bottom:28px" id="errorMsg"></p>
+    <button class="btn-primary" onclick="restart()">Try again</button>
+  </div>
+
+<script>
+var QUESTIONS = [
+  { id:"situation", question:"Where are you at right now?", subtitle:"Pick all that apply", options:["Just finished school","On a gap year","Thinking about taking one","Already deferred uni","Dropped out of something","Working but feeling stuck"] },
+  { id:"working", question:"Are you working?", subtitle:"Pick all that apply", options:["Full-time job","Casual / part-time shifts","Freelancing or side hustle","Not working","Looking for work"] },
+  { id:"main_concern", question:"What's on your mind?", subtitle:"Pick as many as you want", options:["I don't know what I want to study","I got into something but I'm not sure about it","I want to travel but can't afford it","I feel like I'm falling behind everyone","I just need a break from everything","I'm not sure uni is even for me","I want to do something but don't know what"] },
+  { id:"people", question:"How are the people around you about it?", subtitle:"Pick all that apply", options:["Supportive \u2014 they trust me","Pressuring me to go to uni","Comparing me to others","Mixed \u2014 depends who","Nobody really talks about it","I don't really have people to talk to about it"] },
+  { id:"appealing", question:"What actually sounds appealing right now?", subtitle:"Pick all that apply \u2014 no wrong answers", options:["Work and save money","Travel somewhere","Study something specific","Try a bunch of different things","Build something of my own","Meet new people","Honestly, just figure my life out"] },
+  { id:"fear", question:"What scares you most?", subtitle:"Pick all that hit", options:["Wasting time","Getting left behind","Making the wrong choice","Not having enough money","Disappointing people","Ending up with no direction","Missing out on experiences"] }
+];
+
+var currentQ = 0;
+var answers = {};
+var selected = [];
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  var el = document.getElementById(id);
+  el.classList.add('active');
+  el.classList.remove('fade-in');
+  void el.offsetWidth;
+  el.classList.add('fade-in');
+}
+
+function startQuiz() {
+  currentQ = 0;
+  answers = {};
+  renderQuestion();
+  showScreen('question');
+}
+
+function renderQuestion() {
+  var q = QUESTIONS[currentQ];
+  selected = [];
+
+  var bar = document.getElementById('progressBar');
+  bar.innerHTML = '';
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    var dot = document.createElement('div');
+    dot.className = 'progress-dot' + (i <= currentQ ? ' active' : '');
+    bar.appendChild(dot);
+  }
+
+  document.getElementById('qCounter').textContent = (currentQ + 1) + ' of ' + QUESTIONS.length;
+  document.getElementById('qTitle').textContent = q.question;
+  document.getElementById('qSubtitle').textContent = q.subtitle;
+
+  var wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  for (var j = 0; j < q.options.length; j++) {
+    (function(opt) {
+      var btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = '<span class="checkbox"></span><span>' + opt + '</span>';
+      btn.onclick = function() { toggleOption(opt, btn); };
+      wrap.appendChild(btn);
+    })(q.options[j]);
+  }
+
+  document.getElementById('nextBtn').disabled = true;
+}
+
+function toggleOption(opt, btn) {
+  var idx = selected.indexOf(opt);
+  if (idx >= 0) {
+    selected.splice(idx, 1);
+    btn.classList.remove('selected');
+    btn.querySelector('.checkbox').textContent = '';
+  } else {
+    selected.push(opt);
+    btn.classList.add('selected');
+    btn.querySelector('.checkbox').textContent = '\u2713';
+  }
+  document.getElementById('nextBtn').disabled = selected.length === 0;
+}
+
+function nextQuestion() {
+  answers[QUESTIONS[currentQ].id] = selected.slice();
+  currentQ++;
+  if (currentQ < QUESTIONS.length) {
+    renderQuestion();
+    var el = document.getElementById('question');
+    el.classList.remove('fade-in');
+    void el.offsetWidth;
+    el.classList.add('fade-in');
+  } else {
+    var bar = document.getElementById('progressBarFull');
+    bar.innerHTML = '';
+    for (var i = 0; i < 6; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'progress-dot active';
+      bar.appendChild(dot);
+    }
+    document.getElementById('freeTextInput').value = '';
+    showScreen('freetext');
+  }
+}
+
+function submitFreeText(text) {
+  showScreen('loading');
+  cycleLoadingMessages();
+  callAPI(text);
+}
+
+var loadingInterval;
+function cycleLoadingMessages() {
+  var msgs = ["Reading between the lines\u2026","No judgement, just honesty\u2026","Putting your reality check together\u2026"];
+  var i = 0;
+  clearInterval(loadingInterval);
+  loadingInterval = setInterval(function() {
+    i = (i + 1) % msgs.length;
+    document.getElementById('loadingMsg').textContent = msgs[i];
+  }, 2400);
+}
+
+function callAPI(freeText) {
+  var lines = [];
+  for (var i = 0; i < QUESTIONS.length; i++) {
+    var q = QUESTIONS[i];
+    lines.push(q.question + "\n-> " + (answers[q.id] || []).join(", "));
+  }
+  var msg = "Here are my answers:\n\n" + lines.join("\n\n");
+
+  fetch("/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ answers: msg, freeText: freeText })
+  })
+  .then(function(r) {
+    if (!r.ok) throw new Error("Server error: " + r.status);
+    return r.json();
+  })
+  .then(function(data) {
+    clearInterval(loadingInterval);
+    if (data.error) throw new Error(data.error);
+    renderResult(data);
+    showScreen('result');
+  })
+  .catch(function(err) {
+    clearInterval(loadingInterval);
+    document.getElementById('errorMsg').textContent = err.message;
+    showScreen('error');
+  });
+}
+
+function renderResult(data) {
+  var sections = [
+    { icon:"\uD83D\uDCCD", label:"Where you're actually at", key:"where_youre_at" },
+    { icon:"\uD83D\uDE2E", label:"What you don't need to worry about yet", key:"dont_worry" },
+    { icon:"\uD83C\uDFAF", label:"What's actually worth thinking about", key:"worth_thinking" },
+    { icon:"\u26A1", label:"One thing to do this week", key:"one_thing" }
+  ];
+  var wrap = document.getElementById('resultCards');
+  wrap.innerHTML = '';
+  for (var i = 0; i < sections.length; i++) {
+    var s = sections[i];
+    var card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = '<div class="card-header"><span class="card-icon">' + s.icon + '</span><span class="card-label">' + s.label + '</span></div><p class="card-body">' + escapeHtml(data[s.key]) + '</p>';
+    wrap.appendChild(card);
+  }
+}
+
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function restart() {
+  currentQ = 0;
+  answers = {};
+  selected = [];
+  showScreen('landing');
+}
+</script>
+</body>
+</html>
